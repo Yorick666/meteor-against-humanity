@@ -1,0 +1,8 @@
+{
+    "evil": true,
+    "globals": {
+      "suite": false,
+      "test": false,
+      "emit": false
+    }
+}

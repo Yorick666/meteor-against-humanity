@@ -1,0 +1,52 @@
+<head>
+  <title>Meteor Against Humanity!</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+</head>
+
+<body>
+  {{> menu}}
+  {{> main}}
+</body>
+
+<template name="menu">
+  <menu>
+    {{loginButtons}}
+    {{#if currentUser}}
+      {{#if inGame}}
+        <a href="#" id="leave-game">Leave Game</a>
+      {{else}}
+        <a href="#" id="new-game">New Game</a>
+        <a href="#" id="join-game">Join Game</a>
+      {{/if}}
+    {{/if}}
+  </menu>
+</template>
+
+<template name="main">
+  <main>
+    {{#if inGame}}
+      {{> playerList}}
+      {{> cardList}}
+    {{else}}
+    {{/if}}
+  </main>
+</template>
+
+<template name="playerList">
+  <ul class="playerList">
+    <li>Game ID: {{inGame}}</li>
+    {{#each players}}
+      <li>{{this.username}}</li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="cardList">
+  <ul class="cardList">
+    {{#each cards}}
+      <li><span class="card">{{this.text}}</span></li>
+    {{/each}}
+  </ul>
+</template>

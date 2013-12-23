@@ -1,0 +1,57 @@
+@import "nib"
+
+global-reset()
+reset-html5()
+
+mah-dark = #111
+
+radius = 0.50em
+
+html, body
+  height 100%
+  font-family "Helvetica Neue", Helvetica, Arial, sans-serif
+  font-size 16px
+  background linear-gradient(top, #ddd, #222) fixed
+
+menu
+  background linear-gradient(top, #ddd, #aaa)
+  height 3em
+
+  #login-buttons
+    margin 1em
+
+.card
+  display inline-block
+  min-height 5em
+  width 10em
+
+  margin 1rem
+  padding 1em 1.25em
+
+  background white
+  box-shadow 1px 2px 3px 2px rgba(0, 0, 0, 0.25)
+  border-radius radius
+
+  font-weight 700
+  line-height 1.5
+
+  font-size 1.25em
+
+  &:last-child
+    height 15em
+
+  &.selected
+    position relative
+    top -1em
+
+.cardList
+  clear both
+
+  li
+    float left
+    position relative
+
+.playerList
+  li
+    float left
+    padding 0.5em 1em 0em
