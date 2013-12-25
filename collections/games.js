@@ -15,8 +15,8 @@ Meteor.methods({
       players: {},
       numPlayers: 1,
       numAnswers: 0,
-      answers: Cards.find({ cardType: "A", expansion: "Base" }).fetch(),
-      questions: Cards.find({ cardType: "Q", expansion: "Base", numAnswers: 1 }).fetch(),
+      answers: Cards.find({ cardType: "A"/*, expansion: "Base"*/ }).fetch(),
+      questions: Cards.find({ cardType: "Q"/*, expansion: "Base"*/, numAnswers: 1 }).fetch(),
       question: undefined,
       submittedAnswers: [],
       state: "waiting"
@@ -61,6 +61,8 @@ Meteor.methods({
     if (!user) { throw new Meteor.Error(401, "Must be logged in to leave a new game!"); }
 
     if (game.players[user._id]) {
+      // TODO: Handle Czar leaving the game.
+
       // Put their hand back in the deck
       game.players[user._id].hand.forEach(function (card) { game.answers.push(card); });
       delete game.players[user._id];

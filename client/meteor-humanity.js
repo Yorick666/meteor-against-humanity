@@ -1,3 +1,9 @@
+var unescape = function (string) {
+  var e = document.createElement('div');
+  e.innerHTML = string;
+  return e.childNodes[0].nodeValue.replace("_", "__________");
+};
+
 var inGame = function () {
   return Session.get("inGame");
 };
@@ -31,6 +37,33 @@ Template.menu.helpers({
 Template.main.helpers({
   inGame: inGame,
   currentCzar: currentCzar
+});
+
+Template.main.events({
+  "click .game": function (e) {
+    e.preventDefault();
+
+    var gameId = $(e.target).data("id");
+
+    Meteor.call("joinGame", gameId, function (error, id) {
+      Session.set("inGame", id);
+    });
+    
+  }
+});
+
+Template.gameList.helpers({
+  games: function () {
+    return Games.find().fetch();
+  },
+  players: function (gameId) {
+    var game = Games.findOne(gameId);
+
+    if (game) {
+      var players = Object.keys(Games.findOne(gameId).players);
+      return Meteor.users.find({_id:{$in:players}}).fetch();
+    }
+  },
 });
 
 Template.playerList.helpers({
@@ -104,6 +137,8 @@ Template.cardList.selected = function (index) {
   return "";
 };
 
+Template.cardList.unescape = unescape;
+
 Template.cardList.canSubmit = function () {
   return Session.get("canSubmit");
 };
@@ -171,6 +206,8 @@ Template.czarList.question = function () {
     return Games.findOne(gameId).question;
   }
 };
+
+Template.czarList.unescape = unescape;
 
 Template.czarList.selected = function (index) {
   var userId = Meteor.user()._id;

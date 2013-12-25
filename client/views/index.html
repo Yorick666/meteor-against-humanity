@@ -1,5 +1,5 @@
 <head>
-  <title>Meteor Against Humanity!</title>
+  <title>Cah Cah - Meteor Against Humanity!</title>
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
@@ -34,8 +34,17 @@
         {{> cardList}}
       {{/if}}
     {{else}}
+      {{> gameList}}
     {{/if}}
   </main>
+</template>
+
+<template name="gameList">
+      <ul class="gameList">
+      {{#each games}}
+      <li class="game"><a href="#" data-id="{{this._id}}">Join</a> <span>A Room With: {{#each players this._id}}<span class="player">{{this.username}}</span>{{/each}}</span></li>
+      {{/each}}
+      </ul>
 </template>
 
 <template name="playerList">
@@ -53,13 +62,13 @@
 <template name="cardList">
   <ul class="cardList">
   {{#if question}}
-    <li class="card question">{{question.text}} {{#if canSubmit}}<span><a href="#" id="submit-answer">Submit Answer</a></span>{{/if}}</li>
+    <li class="card question">{{unescape question.text}} {{#if canSubmit}}<span><a href="#" id="submit-answer">Submit Answer</a></span>{{/if}}</li>
   {{/if}}
   {{#if submittedAnswer}}
     <li class="card submitted">Answer submitted, wait for the Czar to select a damn winner.</li>
   {{else}}
     {{#each cards}}
-      <li class="card {{selected this.index}}" data-index="{{this.index}}">{{this.text}}</li>
+      <li class="card {{selected this.index}}" data-index="{{this.index}}">{{unescape this.text}}</li>
     {{/each}}
   {{/if}}
   </ul>
@@ -67,12 +76,12 @@
 
 <template name="czarList">
   <ul class="czarList">
-    <li class="card czar">U r teh Card Czar! Wait for answers to be submitted, then make your crappy selection.</li>
+    <li class="card czar">You are the Card Czar! Wait for answers to be submitted, then make your crappy selection.</li>
   {{#if question}}
-  <li class="card question">{{question.text}} {{#if canSubmit}}<span><a href="#" id="submit-winner">Submit Winner</a></span>{{/if}}</li>
+  <li class="card question">{{unescape question.text}} {{#if canSubmit}}<span><a href="#" id="submit-winner">Submit Winner</a></span>{{/if}}</li>
   {{/if}}
   {{#each cards}}
-    <li class="card {{selected this.index}}" data-index="{{this.index}}">{{#each this}}{{this.text}}{{/each}}</li>
+    <li class="card {{selected this.index}}" data-index="{{this.index}}">{{#each this}}{{unescape this.text}}{{/each}}</li>
   {{/each}}
   </ul>
 </template>

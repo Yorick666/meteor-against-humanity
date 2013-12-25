@@ -7,14 +7,14 @@ mah-dark = #111
 
 radius = 0.50em
 
-primary = rgb(100, 150, 255)
+primary = rgb(50, 100, 255)
 secondary = #222
 
 html, body
   height 100%
   font-family "Helvetica Neue", Helvetica, Arial, sans-serif
   font-size 16px
-  background linear-gradient(top, #fff, #222) fixed
+  background linear-gradient(top, #777, #222) fixed
 
 menu
   background linear-gradient(top, #7bf, #59f)
@@ -43,7 +43,7 @@ menu
 
   background white
   box-shadow 1px 2px 3px 2px rgba(0, 0, 0, 0.4)
-  border-radius radius radius 0 0
+  border-radius radius
 
   font-weight 700
   line-height 1.5
@@ -52,13 +52,15 @@ menu
 
   position relative
 
+  cursor pointer
+
   &:last-child
     min-height 20em
     max-height 20em
     border-radius radius
 
   &.selected
-    box-shadow 0px 0px 3px 2px rgba(100, 150, 255, 1)
+    box-shadow 0px 0px 5px 3px rgba(100, 150, 255, 1)
     top -2em
     padding-bottom 4em
     margin-bottom -3em
@@ -70,13 +72,15 @@ menu
     padding-bottom 2em
 
   &.question
-    box-shadow 1px 2px 3px 2px rgba(0, 0, 0, 0.5)
+    box-shadow 1px 2px 5px 3px rgba(0, 0, 0, 0.5)
     border-top 1px solid #ccc
-    border-left 1px solid #aaa
-    border-right 1px solid #999
-    border-bottom 1px solid #999
+    border-left 1px solid #666
+    border-right 1px solid #444
+    border-bottom 1px solid #333
     background secondary
     color white
+
+    cursor inherit
 
     span
       display inline-block
@@ -104,5 +108,36 @@ menu
 
 .playerList
   li
+    color white
     float left
     padding 0.5em 1em 0em
+
+.gameList
+  padding 2em 1em 1em
+
+  .game
+    color white
+    font-weight 400
+    padding 0.5em 1em 2em
+
+    a
+      color white
+      border 1px solid rgba(255, 255, 255, 0.8)
+      text-decoration none
+      font-weight 700
+      padding 0.50em 1.00em
+      margin 1em 0em
+      cursor pointer
+
+      &:hover
+        color secondary
+        background white
+
+    & > span
+      padding 0 1em
+
+    span > span
+      &:after
+        content: ", "
+      &:last-child:after
+        content: ""
