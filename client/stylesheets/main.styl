@@ -7,49 +7,100 @@ mah-dark = #111
 
 radius = 0.50em
 
+primary = rgb(100, 150, 255)
+secondary = #222
+
 html, body
   height 100%
   font-family "Helvetica Neue", Helvetica, Arial, sans-serif
   font-size 16px
-  background linear-gradient(top, #ddd, #222) fixed
+  background linear-gradient(top, #fff, #222) fixed
 
 menu
-  background linear-gradient(top, #ddd, #aaa)
-  height 3em
+  background linear-gradient(top, #7bf, #59f)
+  border-bottom 1px solid #777
+  color white
+
+  height 2em
+
+  a
+    color white
+    margin-right 1em
 
   #login-buttons
-    margin 1em
+    margin 0.5em 1em
 
 .card
-  display inline-block
-  min-height 5em
-  width 10em
+  box-sizing border-box
+  border-top 1px solid #666
+  border-left 1px solid #666
+  border-right 1px solid #999
+  border-bottom 1px solid #999
+  width 15em
 
-  margin 1rem
-  padding 1em 1.25em
+  margin 0 1rem -1em
+  padding 1em 1.25em 2em
 
   background white
-  box-shadow 1px 2px 3px 2px rgba(0, 0, 0, 0.25)
-  border-radius radius
+  box-shadow 1px 2px 3px 2px rgba(0, 0, 0, 0.4)
+  border-radius radius radius 0 0
 
   font-weight 700
   line-height 1.5
 
   font-size 1.25em
 
+  position relative
+
   &:last-child
-    height 15em
+    min-height 20em
+    max-height 20em
+    border-radius radius
 
   &.selected
-    position relative
-    top -1em
+    box-shadow 0px 0px 3px 2px rgba(100, 150, 255, 1)
+    top -2em
+    padding-bottom 4em
+    margin-bottom -3em
 
-.cardList
+  &.question + .selected
+    top 0em
+
+  &.selected:last-child
+    padding-bottom 2em
+
+  &.question
+    box-shadow 1px 2px 3px 2px rgba(0, 0, 0, 0.5)
+    border-top 1px solid #ccc
+    border-left 1px solid #aaa
+    border-right 1px solid #999
+    border-bottom 1px solid #999
+    background secondary
+    color white
+
+    span
+      display inline-block
+      width 100%
+      position relative
+      padding-bottom 4em
+
+      a
+        color white
+        border 1px solid rgba(255, 255, 255, 0.8)
+        text-decoration none
+        padding 0.33em 0.67em
+
+        position absolute
+        right 0
+        bottom 0.5em
+
+        &:hover
+          color secondary
+          background white
+
+.cardList, .czarList
+  padding-top 1em
   clear both
-
-  li
-    float left
-    position relative
 
 .playerList
   li

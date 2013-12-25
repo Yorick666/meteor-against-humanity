@@ -2,7 +2,7 @@
   <title>Meteor Against Humanity!</title>
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
 </head>
 
 <body>
@@ -28,7 +28,11 @@
   <main>
     {{#if inGame}}
       {{> playerList}}
-      {{> cardList}}
+      {{#if currentCzar}}
+        {{> czarList}}
+      {{else}}
+        {{> cardList}}
+      {{/if}}
     {{else}}
     {{/if}}
   </main>
@@ -36,17 +40,39 @@
 
 <template name="playerList">
   <ul class="playerList">
-    <li>Game ID: {{inGame}}</li>
+    <li><p>Game ID: {{inGame}}</p></li>
+    {{#if waiting}}
+    <li>Waiting for more players...</li>
+    {{/if}}
     {{#each players}}
-      <li>{{this.username}}</li>
+    <li>{{this.username}}</li>
     {{/each}}
   </ul>
 </template>
 
 <template name="cardList">
   <ul class="cardList">
+  {{#if question}}
+    <li class="card question">{{question.text}} {{#if canSubmit}}<span><a href="#" id="submit-answer">Submit Answer</a></span>{{/if}}</li>
+  {{/if}}
+  {{#if submittedAnswer}}
+    <li class="card submitted">Answer submitted, wait for the Czar to select a damn winner.</li>
+  {{else}}
     {{#each cards}}
-      <li><span class="card">{{this.text}}</span></li>
+      <li class="card {{selected this.index}}" data-index="{{this.index}}">{{this.text}}</li>
     {{/each}}
+  {{/if}}
+  </ul>
+</template>
+
+<template name="czarList">
+  <ul class="czarList">
+    <li class="card czar">U r teh Card Czar! Wait for answers to be submitted, then make your crappy selection.</li>
+  {{#if question}}
+  <li class="card question">{{question.text}} {{#if canSubmit}}<span><a href="#" id="submit-winner">Submit Winner</a></span>{{/if}}</li>
+  {{/if}}
+  {{#each cards}}
+    <li class="card {{selected this.index}}" data-index="{{this.index}}">{{#each this}}{{this.text}}{{/each}}</li>
+  {{/each}}
   </ul>
 </template>
