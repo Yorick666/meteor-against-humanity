@@ -11,24 +11,29 @@ var inGame = function () {
 var currentCzar = function () {
   var gameId = Session.get("inGame");
   var game = Games.findOne(gameId);
-  return game.currentCzar === Meteor.user()._id;
+  return game ? game.currentCzar === Meteor.user()._id : null;
 };
 
 var waiting = function () {
   var gameId = Session.get("inGame");
   var game = Games.findOne(gameId);
-  return game.state === "waiting";
+  return game ? game.state === "waiting" : true;
 };
 
-Template.playerList.players = function () {
-  var gameId = Session.get("inGame");
-  if (gameId) {
-    var players = Object.keys(Games.findOne(gameId).players).filter(function (p) {
-      return p !== Meteor.user()._id; // Filter out self
-    });
-    return Meteor.users.find({_id:{$in:players}}).fetch();
+Template.playerList.helpers({
+  players: function () {
+    var gameId = Session.get("inGame");
+    if (gameId) {
+      var game = Games.findOne(gameId);
+      if (game) {
+        var players = Object.keys(Games.findOne(gameId).players).filter(function (p) {
+          return p !== Meteor.user()._id; // Filter out self
+        });
+        return Meteor.users.find({_id:{$in:players}}).fetch();
+      } else return [];
+    }
   }
-};
+});
 
 Template.menu.helpers({
   inGame: inGame
@@ -103,53 +108,52 @@ Template.menu.events({
   }
 });
 
-Template.cardList.cards = function () {
-  var gameId = Session.get("inGame");
-  var hand;
-  if (gameId !== undefined) {
+Template.cardList.helpers({
+  cards: function () {
+    var gameId = Session.get("inGame");
+    var hand;
+    if (gameId !== undefined) {
+      var game = Games.findOne(gameId);
+      if (!game) return [];
+      hand = Games.findOne(gameId).players[Meteor.user()._id].hand;
+      hand.forEach(function (card, i) {
+        card.index = i;
+      });
 
-    hand = Games.findOne(gameId).players[Meteor.user()._id].hand;
-    hand.forEach(function (card, i) {
-      card.index = i;
-    });
+      return hand;
+    }
+  },
+  question: function () {
+    var gameId = Session.get("inGame");
+    if (gameId) {
+      var game = Games.findOne(gameId);
+      return game ? Games.findOne(gameId).question : null;
+    }
+  },
+  selected: function (index) {
+    var userId = Meteor.user()._id;
+    var gameId = Session.get("inGame");
+    var game;
 
-    return hand;
+    if (gameId) {
+      game = Games.findOne(gameId);
+      if (game.players[userId].hand[index].selected) { return "selected"; }
+    }
+
+    return "";
+  },
+  unescape: unescape,
+  canSubmit: function () {
+    return Session.get("canSubmit");
+  },
+  submittedAnswer: function () {
+    var userId = Meteor.user()._id;
+    var gameId = Session.get("inGame");
+    var game = Games.findOne(gameId);
+
+    return game ? game.players[userId].answer : null;
   }
-};
-
-Template.cardList.question = function () {
-  var gameId = Session.get("inGame");
-  if (gameId) {
-    return Games.findOne(gameId).question;
-  }
-};
-
-Template.cardList.selected = function (index) {
-  var userId = Meteor.user()._id;
-  var gameId = Session.get("inGame");
-  var game;
-
-  if (gameId) {
-    game = Games.findOne(gameId);
-    if (game.players[userId].hand[index].selected) { return "selected"; }
-  }
-
-  return "";
-};
-
-Template.cardList.unescape = unescape;
-
-Template.cardList.canSubmit = function () {
-  return Session.get("canSubmit");
-};
-
-Template.cardList.submittedAnswer = function () {
-  var userId = Meteor.user()._id;
-  var gameId = Session.get("inGame");
-  var game = Games.findOne(gameId);
-
-  return game.players[userId].answer;
-};
+});
 
 Template.cardList.events({
   "click .card": function (e) {
@@ -190,41 +194,39 @@ Template.cardList.events({
   }
 });
 
-Template.czarList.cards = function () {
-  var gameId = Session.get("inGame");
-  var submittedAnswers;
-  if (gameId) {
-    submittedAnswers = Games.findOne(gameId).submittedAnswers;
-    submittedAnswers.forEach(function (answer, i) { answer.index = i; });
-    return submittedAnswers;
+Template.czarList.helpers({
+  cards: function () {
+    var gameId = Session.get("inGame");
+    var submittedAnswers;
+    if (gameId) {
+      submittedAnswers = Games.findOne(gameId).submittedAnswers;
+      submittedAnswers.forEach(function (answer, i) { answer.index = i; });
+      return submittedAnswers;
+    }
+  },
+  question: function () {
+    var gameId = Session.get("inGame");
+    if (gameId) {
+      return Games.findOne(gameId).question;
+    }
+  },
+  unescape: unescape,
+  selected: function (index) {
+    var userId = Meteor.user()._id;
+    var gameId = Session.get("inGame");
+    var game;
+
+    if (gameId) {
+      game = Games.findOne(gameId);
+      if (game.submittedAnswers[index][0].selected) { return "selected"; }
+    }
+
+    return "";
+  },
+  canSubmit: function () {
+    return Session.get("canSubmit");
   }
-};
-
-Template.czarList.question = function () {
-  var gameId = Session.get("inGame");
-  if (gameId) {
-    return Games.findOne(gameId).question;
-  }
-};
-
-Template.czarList.unescape = unescape;
-
-Template.czarList.selected = function (index) {
-  var userId = Meteor.user()._id;
-  var gameId = Session.get("inGame");
-  var game;
-
-  if (gameId) {
-    game = Games.findOne(gameId);
-    if (game.submittedAnswers[index][0].selected) { return "selected"; }
-  }
-
-  return "";
-};
-
-Template.czarList.canSubmit = function () {
-  return Session.get("canSubmit");
-};
+});
 
 Template.czarList.events({
   "click .card": function (e) {
@@ -237,7 +239,9 @@ Template.czarList.events({
     var game = Games.findOne(gameId);
     var index = $(e.target).data("index");
 
-    game.submittedAnswers[index][0].selected = !game.submittedAnswers[index][0].selected;
+    if (game.submittedAnswers[index]) {
+      game.submittedAnswers[index][0].selected = !game.submittedAnswers[index][0].selected;
+    }
 
     Games.update(gameId, game);
 
@@ -246,7 +250,7 @@ Template.czarList.events({
       if (card[0].selected) { numSelected++; }
     });
 
-    if (numSelected === game.question.numAnswers) {
+    if (game.question && numSelected === game.question.numAnswers) {
       game.players[userId].canSubmit = true;
       Session.set("canSubmit", true);
     } else {
