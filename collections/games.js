@@ -14,6 +14,7 @@ Meteor.methods({
     game = {
       players: {},
       numPlayers: 1,
+      requestedPlayers: 4,
       numAnswers: 0,
       answers: Cards.find({ cardType: "A"/*, expansion: "Base"*/ }).fetch(),
       questions: Cards.find({ cardType: "Q"/*, expansion: "Base"*/, numAnswers: 1 }).fetch(),
@@ -42,10 +43,12 @@ Meteor.methods({
 
     if (game.players[user._id]) { return gameId; }
 
+    if (game.state === "playing") { throw new Meteor.Error(401, "The game is full!"); }
+
     game.players[user._id] = { hand: game.answers.splice(0, 10) };
     game.numPlayers++;
 
-    if (game.state === "waiting" /* && game.numPlayers > 2 */) {
+    if (game.state === "waiting" && game.numPlayers === game.requestedPlayers) {
       game.state = "playing";
       game.question = game.questions.shift();
     }
@@ -85,7 +88,16 @@ Meteor.methods({
   dealQuestion: function (gameId) {
     var game = Games.findOne(gameId);
     if (game) {
+      // Cleanup
+      game.submittedAnswers = [];
+      game.numAnswers = 0;
+
+      // New Question!
+      game.questions.push(game.question); // Put the current question back
       game.question = game.questions.shift();
+
+      game.state = "playing";
+      
       Games.update(gameId, game);
     }
   },
@@ -137,16 +149,6 @@ Meteor.methods({
       game.players[player].answer = undefined;
     });
 
-    // Cleanup
-    game.submittedAnswers = [];
-    game.numAnswers = 0;
-
-    // New Question!
-    game.questions.push(game.question); // Put the current question back
-    game.question = game.questions.shift();
-
-    game.state = "playing";
-    
-    Games.update(gameId, game);
+    dealQuestion(gameId);
   }
 });

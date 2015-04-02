@@ -59,7 +59,7 @@ Template.main.events({
 
 Template.gameList.helpers({
   games: function () {
-    return Games.find().fetch();
+    return Games.find({state:"waiting"}).fetch();
   },
   players: function (gameId) {
     var game = Games.findOne(gameId);
